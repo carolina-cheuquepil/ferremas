@@ -58,3 +58,5 @@ def eliminar_registro(request, movimiento_id):
         return Response({'mensaje': 'Registro eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
     except HistorialInventario.DoesNotExist:
         return Response({'error': 'Registro no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    
+

@@ -20,4 +20,7 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('inventario_app.urls')),  # Conecta la app
+    path('api/', include('usuarios_app.urls')),
 ]
+
+

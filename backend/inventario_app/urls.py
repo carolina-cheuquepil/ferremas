@@ -4,6 +4,7 @@ from .view_tablas.categoria_views import listar_categorias, obtener_categoria
 from .view_tablas.marca_views import all_marcas, get_by_id, crear_marca
 from .view_tablas.sucursal_views import listar_sucursales, obtener_sucursal
 from .view_tablas.inventario_views import get_all_inventario, crear_registro, actualizar_registro, actualizar_registro_parcial, eliminar_registro
+from .views import inventario_por_sucursal
 
 urlpatterns = [
     path('productos/', productos_api, name='productos_api'),
@@ -27,7 +28,14 @@ urlpatterns = [
     path('inventarios/actualizar/<int:movimiento_id>/', actualizar_registro, name='actualizar_inventario'),
     path('inventarios/editar/<int:movimiento_id>/', actualizar_registro_parcial),
     path('inventarios/eliminar/<int:movimiento_id>/', eliminar_registro),
+    #FRONEND PASO 2
+    path('inventario/<int:sucursal_id>/', inventario_por_sucursal, name='inventario_sucursal'),
+
 ]
+
+
+
+
 
     
 
