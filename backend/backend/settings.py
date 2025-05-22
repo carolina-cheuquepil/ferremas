@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'inventario_app',
     'usuarios_app',
-    'pedidos_app'
+    'pedidos_app',
+    'pagos_app'
 ]
 
 MIDDLEWARE = [

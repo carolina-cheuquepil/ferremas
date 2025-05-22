@@ -22,6 +22,7 @@ urlpatterns = [
     path('', include('inventario_app.urls')),  # Conecta la app
     path('api/', include('usuarios_app.urls')),
     path('pedidos/', include('pedidos_app.urls')),
+    path('pagos/', include('pagos_app.urls')),  # Ajusta "pago_app" al nombre real de tu app
 ]
 
 
