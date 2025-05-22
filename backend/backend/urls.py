@@ -21,6 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('inventario_app.urls')),  # Conecta la app
     path('api/', include('usuarios_app.urls')),
+    path('pedidos/', include('pedidos_app.urls')),
 ]
 
 
