@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+<!--titulo-->
+{% block titulo %}Iniciar sesión{% endblock %} {% block subtitulo %}
+<h2 class="text-center">Inicia sesión</h2>
+{% endblock %} {% block contenido %}
+<form method="post" class="mx-auto" style="max-width: 400px">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn btn-primary w-100">Entrar</button>
+</form>
+{% endblock %}

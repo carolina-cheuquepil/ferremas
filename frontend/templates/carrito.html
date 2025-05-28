@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+<!--Titulo-->
+{% block titulo %}Carrito - Ferremas{% endblock %} {% block subtitulo %}
+<h2 class="text-center mb-4">🛒 Tu carrito de compras</h2>
+{% endblock %} {% block contenido %} {% if mensaje %}
+<div class="alert alert-info text-center">{{ mensaje }}</div>
+{% else %}
+<h5>
+  Pedido N° {{ pedido.pedido_id }} - Tipo de entrega: {{ pedido.tipo_entrega }}
+</h5>
+<table class="table table-bordered table-hover mt-4">
+  <thead class="table-light">
+    <tr>
+      <th>Producto</th>
+      <th>Cantidad</th>
+      <th>Precio Unitario</th>
+      <th>Total</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for d in detalles %}
+    <tr>
+      <td>{{ d.producto.nombre_producto }}</td>
+      <td>{{ d.cantidad }}</td>
+      <td>${{ d.precio_unitario }}</td>
+      <td>${{ d.total_linea }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endif %}
+
+<div class="text-end mt-3">
+  <p><strong>Total en pesos:</strong> ${{ pedido.total|floatformat:0 }}</p>
+  <p><strong>Valor del dólar usado:</strong> ${{ pedido.valor_dolar_usado }}</p>
+  <p>
+    <strong>Total en dólares:</strong> ${{ pedido.total_usd|floatformat:2 }}
+  </p>
+</div>
+
+{% endblock %}

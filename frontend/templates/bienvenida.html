@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+<!-- Titulo -->
+{% block titulo %}Bienvenida{% endblock %} {% block subtitulo %}
+<h2 class="text-center">¡Bienvenida a Ferremas!</h2>
+{% endblock %} {% block contenido %}
+<div class="text-center mt-4">
+  <p class="fs-4">
+    Hola <strong>{{ nombre }}</strong>, has iniciado sesión correctamente.
+  </p>
+  <a href="/productos/lista/" class="btn btn-primary mt-3">Ir al catálogo</a>
+</div>
+{% endblock %}

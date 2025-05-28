@@ -1,7 +1,6 @@
 from django.db import models
 
-#PASO 1 
-
+#PASO 1: Backend
 class Estado(models.Model):
     estado_id = models.AutoField(primary_key=True)
     nombre_estado = models.CharField(max_length=50)
@@ -20,6 +19,8 @@ class Pedido(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     total = models.IntegerField(null=True, blank=True)
     tipo_entrega = models.CharField(max_length=10, choices=[('retiro', 'Retiro'), ('domicilio', 'Domicilio')], default='retiro')
+    valor_dolar_usado = models.DecimalField(max_digits=10, decimal_places=2)
+    total_usd = models.DecimalField(max_digits=10, decimal_places=2)
 
     class Meta:
         db_table = 'Pedido'

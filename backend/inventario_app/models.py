@@ -36,6 +36,7 @@ class Producto(models.Model):
     modelo = models.CharField(max_length=100, null=True, blank=True)
     precio = models.IntegerField()
     codigo_sku = models.CharField(max_length=50, unique=True)
+    imagen = models.ImageField(upload_to='imagenes/', null=True, blank=True)
 
     class Meta:
         db_table = 'producto'

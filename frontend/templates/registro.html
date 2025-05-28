@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+<!-- titulo -->
+{% block titulo %}Registrarse{% endblock %} {% block subtitulo %}
+<h2 class="text-center">Registro de Cliente</h2>
+{% endblock %} {% block contenido %}
+<form method="post" class="mx-auto" style="max-width: 500px">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn btn-success w-100">Registrarse</button>
+</form>
+{% endblock %}

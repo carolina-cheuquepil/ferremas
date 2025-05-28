@@ -16,6 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -23,6 +25,8 @@ urlpatterns = [
     path('api/', include('usuarios_app.urls')),
     path('pedidos/', include('pedidos_app.urls')),
     path('pagos/', include('pagos_app.urls')),  # Ajusta "pago_app" al nombre real de tu app
-]
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
-
+# Agregar esta línea para servir imágenes en desarrollo - PASO 2
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
