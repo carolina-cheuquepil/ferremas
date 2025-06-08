@@ -5,9 +5,6 @@ from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
 
-
-
-# 🧾 Formulario de registro
 class RegistroForm(forms.ModelForm):
     contrasena = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
 
@@ -15,7 +12,19 @@ class RegistroForm(forms.ModelForm):
         model = Cliente
         fields = ['nombre', 'correo', 'direccion', 'telefono', 'rut', 'contrasena']
 
-# 🧠 Vista de registro
+#------------- 1. Formulario de login --------------------
+#Clientes
+class LoginForm(forms.Form):
+    correo = forms.EmailField(label="Correo")
+    contrasena = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
+
+#Trabajadores
+class LoginTrabajadorForm(forms.Form):
+    usuario = forms.CharField(label="Usuario")
+    contrasena = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
+
+#------------- 2. Vistas  --------------------
+#Clientes
 def registro_view(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -50,10 +59,7 @@ def registro_view(request):
 
     return render(request, 'registro.html', {'form': form})
 
-# 🧾 Formulario de login
-class LoginForm(forms.Form):
-    correo = forms.EmailField(label="Correo")
-    contrasena = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
+
 
 # 🧠 Vista de login
 def login_view(request):
@@ -82,6 +88,38 @@ def logout_view(request):
     logout(request)
     messages.success(request, "Sesión cerrada correctamente 👋")
     return redirect('/productos/lista/')  # Redirige al inicio o donde quieras
+
+
+# 🧠 Vista de login para trabajadores
+
+
+
+def login_trabajador_view(request):
+    form = LoginTrabajadorForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        username = form.cleaned_data['usuario']
+        password = form.cleaned_data['contrasena']
+
+        usuario = authenticate(request, username=username, password=password)
+
+        if usuario is not None:
+            # Validamos que tenga perfil de trabajador
+            if hasattr(usuario, 'usuario') and usuario.usuario.cargo in ['Bodeguero', 'Vendedor', 'Administrador', 'Contadora']:
+                login(request, usuario)
+                return redirect('/bodega/pedidos/')
+            else:
+                messages.error(request, "No tienes permisos para ingresar aquí.")
+        else:
+            messages.error(request, "Credenciales inválidas.")
+
+    return render(request, 'login_trabajador.html', {'form': form})
+
+
+
+
+
+
 
 
 

@@ -1,53 +1,56 @@
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from rest_framework import status
+# ---------------- PASO 1 TBK-----------------
+# pip install transbank-sdk
+
+# ---------------- PASO 2 TBK-----------------
+#Configuración en el archivo settings.py
+
+# ---------------- PASO 3 TBK-----------------
+#Importación de Módulos Necesarios:
+from django.shortcuts import render, redirect, get_object_or_404
+from django.conf import settings
+from transbank.webpay.webpay_plus.transaction import Transaction
+from transbank.common.integration_type import IntegrationType
+from pedidos_app.models import Pedido
 from .models import Pago
-from .serializers import PagoSerializer
 
-@api_view(['POST'])
-def crear_pago(request):
-    serializer = PagoSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+def construir_transaccion():
+    return Transaction.build_for_integration(
+        commerce_code=settings.TRANSBANK['COMMERCE_CODE'],
+        api_key=settings.TRANSBANK['API_KEY']
+    )
 
-@api_view(['GET'])
-def listar_pagos(request):
-    pagos = Pago.objects.all()
-    serializer = PagoSerializer(pagos, many=True)
-    return Response(serializer.data)
+def iniciar_pago(request, pedido_id):
+    transaction = construir_transaccion()
 
-@api_view(['GET'])
-def obtener_pago_por_id(request, id):
-    try:
-        pago = Pago.objects.get(pk=id)
-    except Pago.DoesNotExist:
-        return Response({'error': 'Pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
-    serializer = PagoSerializer(pago)
-    return Response(serializer.data)
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
 
-@api_view(['PUT', 'PATCH'])
-def actualizar_pago(request, id):
-    try:
-        pago = Pago.objects.get(pk=id)
-    except Pago.DoesNotExist:
-        return Response({'error': 'Pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    buy_order = str(pedido.pedido_id)
+    session_id = str(request.user.id)
+    amount = pedido.total
+    return_url = 'http://localhost:8000/pagos/retorno/'
 
-    parcial = request.method == 'PATCH'
-    serializer = PagoSerializer(pago, data=request.data, partial=parcial)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    response = transaction.create(buy_order, session_id, amount, return_url)
 
-@api_view(['DELETE'])
-def eliminar_pago(request, id):
-    try:
-        pago = Pago.objects.get(pk=id)
-    except Pago.DoesNotExist:
-        return Response({'error': 'Pago no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+    return redirect(f"{response['url']}?token_ws={response['token']}")
 
-    pago.delete()
-    return Response({'mensaje': 'Pago eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
+def retorno_pago(request):
+    transaction = construir_transaccion()
+
+    token = request.GET.get('token_ws')
+
+    response = transaction.commit(token)
+
+    if response['status'] == 'AUTHORIZED':
+        pedido = Pedido.objects.get(pedido_id=response['buy_order'])
+        Pago.objects.create(
+            pedido=pedido,
+            metodo_pago='WebPay Plus',
+            monto=pedido.total
+        )
+        return render(request, 'pagos_app/exito.html', {'pedido': pedido})
+    else:
+        return render(request, 'pagos_app/error.html')
+
+
+
 

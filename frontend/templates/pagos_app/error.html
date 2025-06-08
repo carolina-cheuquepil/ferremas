@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+<!---->
+{% block titulo %}Error en el Pago{% endblock %} {% block subtitulo %}
+<h2 class="text-center text-danger">❌ Error en el Pago</h2>
+{% endblock %} {% block contenido %}
+<div class="text-center mt-5">
+  <p class="fs-4">Hubo un problema al procesar tu pago.</p>
+  <p>Por favor, intenta nuevamente.</p>
+  <a href="/" class="btn btn-danger mt-4">Volver al inicio</a>
+</div>
+{% endblock %}

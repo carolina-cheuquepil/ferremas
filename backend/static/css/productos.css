@@ -1,0 +1,11 @@
+/* static/css/catalogo.css */
+.btn-comprar {
+  background-color: #0d6efd;
+  color: white;
+}
+
+.card-img-top {
+  width: 100%;
+  height: 250px;
+  object-fit: contain; /* Se ve toda la imagen (aunque deje bordes) */
+}

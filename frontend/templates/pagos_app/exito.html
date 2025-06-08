@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+<!---->
+{% block titulo %}Pago Exitoso{% endblock %} {% block subtitulo %}
+<h2 class="text-center text-success">¡Pago Exitoso!</h2>
+{% endblock %} {% block contenido %}
+<div class="text-center mt-5">
+  <p class="fs-4">Gracias por tu compra.</p>
+  <p>Pedido N° <strong>{{ pedido.pedido_id }}</strong></p>
+  <p>Monto pagado: <strong>${{ pedido.total|floatformat:0 }}</strong></p>
+  <a href="/" class="btn btn-success mt-4">Volver al inicio</a>
+</div>
+{% endblock %}

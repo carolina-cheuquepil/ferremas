@@ -1,13 +1,13 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %} {% load static %}
+
 <!--Título-->
-{% block titulo %}Catálogo - Ferremas{% endblock %} {% block extra_css %}
-<style>
-  .btn-comprar {
-    background-color: #0d6efd;
-    color: white;
-  }
-</style>
-{% endblock %} {% block subtitulo %}
+{% block titulo %}Catálogo - Ferremas{% endblock %}
+<!--Estilos-->
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/productos.css' %}" />
+{% endblock %}
+<!--Subtítulo-->
+{% block subtitulo %}
 <h2 class="text-center mb-4">Catálogo de Productos</h2>
 {% endblock %} {% block contenido %}
 <div class="row">

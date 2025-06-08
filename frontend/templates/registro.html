@@ -1,10 +1,42 @@
-{% extends 'base.html' %}
-<!-- titulo -->
-{% block titulo %}Registrarse{% endblock %} {% block subtitulo %}
-<h2 class="text-center">Registro de Cliente</h2>
-{% endblock %} {% block contenido %}
-<form method="post" class="mx-auto" style="max-width: 500px">
-  {% csrf_token %} {{ form.as_p }}
+{% extends 'base.html' %}{% load widget_tweaks %}
+<!---->
+{% block titulo %}Registro{%endblock %}
+<!---->
+{% block subtitulo %}
+<h2 class="text-center mb-4">Registro de Cliente</h2>
+{% endblock %}
+<!---->
+{% block contenido %}
+<form
+  method="post"
+  class="mx-auto shadow p-4 rounded-3"
+  style="max-width: 500px; background: #fff"
+>
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="id_nombre" class="form-label">Nombre:</label>
+    {{ form.nombre|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_correo" class="form-label">Correo:</label>
+    {{ form.correo|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_direccion" class="form-label">Dirección:</label>
+    {{ form.direccion|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_telefono" class="form-label">Teléfono:</label>
+    {{ form.telefono|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_rut" class="form-label">RUT:</label>
+    {{ form.rut|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_contrasena" class="form-label">Contraseña:</label>
+    {{ form.contrasena|add_class:"form-control" }}
+  </div>
   <button type="submit" class="btn btn-success w-100">Registrarse</button>
 </form>
 {% endblock %}

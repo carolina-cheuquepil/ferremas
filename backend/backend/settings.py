@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'inventario_app',
     'usuarios_app',
     'pedidos_app',
-    'pagos_app'
+    'pagos_app',
+    'widget_tweaks', # Para usar widgets-tweak en el frontend
 ]
 
 MIDDLEWARE = [
@@ -146,3 +147,11 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login/'
+
+# Configuración de Transbank Webpay Plus
+# settings.py
+TRANSBANK = {
+    "COMMERCE_CODE": os.environ.get("TBK_COMMERCE_CODE", "597055555532"),
+    "API_KEY": os.environ.get("TBK_API_KEY", "579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C"),
+    "ENV": os.environ.get("TBK_ENV", "integration"),  # integration o production
+}
