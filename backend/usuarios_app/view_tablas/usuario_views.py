@@ -1,5 +1,3 @@
-from django.shortcuts import render
-from rest_framework.views import APIView
 from rest_framework.response import Response
 from usuarios_app.models import Usuario
 from usuarios_app.serializers import UsuarioSerializer
@@ -55,7 +53,7 @@ def eliminar_usuario(request, usuario_id):
     try:
         usuario = Usuario.objects.get(pk=usuario_id)
     except Usuario.DoesNotExist:
-        return Response({'error': 'Uusario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'error': 'Usuario no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
     usuario.delete()
     return Response({'mensaje': 'Usuario eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)

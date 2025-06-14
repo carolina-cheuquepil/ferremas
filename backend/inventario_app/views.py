@@ -9,6 +9,8 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Long
 from django.shortcuts import render
 from .models import Producto, Marca, HistorialInventario, Sucursal
 from utils.divisas import obtener_valor_dolar
+from pedidos_app.models import Pedido
+from inventario_app.models import HistorialInventario
 
 def inventario_por_sucursal(request, sucursal_id):
     sucursal = Sucursal.objects.get(pk=sucursal_id)
@@ -58,6 +60,12 @@ def lista_productos(request):
         })
 
     return render(request, 'pagina/productos.html', {'productos': lista})
+#FRONEND PASO 1
+def sistema_bodega(request):
+    pedidos = Pedido.objects.all()
+    inventarios = HistorialInventario.objects.all()
+    return render(request, 'pagina/sistema.html', {'pedidos': pedidos, 'inventarios': inventarios})
+
 
 
 

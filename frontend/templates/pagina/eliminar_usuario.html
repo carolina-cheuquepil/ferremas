@@ -1,0 +1,10 @@
+{% extends 'base_interno.html' %}
+<!--------------------Pestañas----------------->
+{% block titulo %}Eliminar Empleado{% endblock %} {% block contenido %}
+<h2>¿Estás seguro de que deseas eliminar al empleado {{ usuario.nombre }}?</h2>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-danger">Eliminar</button>
+  <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

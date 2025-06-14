@@ -1,0 +1,55 @@
+{% extends 'base_interno.html' %}
+<!--------------------Paso 4 froend----------------->
+
+{% block titulo %}Registrar Trabajador{% endblock %} {% block contenido %}
+<div class="container mt-4">
+  <h2 class="mb-4">Registrar Trabajador</h2>
+
+  <form method="POST" action="{% url 'crear_usuario_form' %}">
+    {% csrf_token %}
+
+    <div class="mb-3">
+      <label for="nombre" class="form-label">Nombre completo</label>
+      <input type="text" class="form-control" name="nombre" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="correo" class="form-label">Correo</label>
+      <input type="email" class="form-control" name="correo" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="rut" class="form-label">RUT</label>
+      <input type="text" class="form-control" name="rut" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="telefono" class="form-label">Teléfono</label>
+      <input type="text" class="form-control" name="telefono" />
+    </div>
+
+    <div class="mb-3">
+      <label for="direccion" class="form-label">Dirección</label>
+      <input type="text" class="form-control" name="direccion" />
+    </div>
+
+    <div class="mb-3">
+      <label for="cargo" class="form-label">Cargo</label>
+      <input type="text" class="form-control" name="cargo" />
+    </div>
+
+    <div class="mb-3">
+      <label for="username" class="form-label">Usuario (login)</label>
+      <input type="text" class="form-control" name="username" required />
+    </div>
+
+    <div class="mb-3">
+      <label for="password" class="form-label">Contraseña</label>
+      <input type="password" class="form-control" name="password" required />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Registrar</button>
+    <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
+  </form>
+</div>
+{% endblock %}

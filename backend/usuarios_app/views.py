@@ -1,9 +1,10 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django import forms
-from usuarios_app.models import Cliente
+from usuarios_app.models import Cliente, Usuario
 from django.contrib.auth.models import User
 from django.contrib.auth import login, authenticate, logout
 from django.contrib import messages
+from forms import UsuarioForm  # Asegúrate de tener el formulario creado
 
 class RegistroForm(forms.ModelForm):
     contrasena = forms.CharField(widget=forms.PasswordInput, label='Contraseña')
@@ -90,30 +91,73 @@ def logout_view(request):
     return redirect('/productos/lista/')  # Redirige al inicio o donde quieras
 
 
-# 🧠 Vista de login para trabajadores
 
 
+
+# ---------------- PARTE 1 Empleados--------------------
+
+def lista_usuarios_view(request):
+    usuarios = Usuario.objects.all()
+    return render(request, 'pagina/empleados.html', {'usuarios': usuarios})
+
+
+
+
+# Editar
+def editar_usuario_view(request, usuario_id):
+    usuario = get_object_or_404(Usuario, pk=usuario_id)
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST, instance=usuario)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_usuarios')
+    else:
+        form = UsuarioForm(instance=usuario)
+    return render(request, 'pagina/editar_usuario.html', {'form': form})
+
+# Eliminar
+def eliminar_usuario_view(request, usuario_id):
+    usuario = get_object_or_404(Usuario, pk=usuario_id)
+    if request.method == 'POST':
+        usuario.delete()
+        return redirect('lista_usuarios')
+    return render(request, 'pagina/eliminar_usuario.html', {'usuario': usuario})
+
+
+
+# Procesa formulario: Frontend 2 TRABAJADORES 
+
+def crear_usuario_view(request):
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('lista_usuarios')
+    else:
+        form = UsuarioForm()
+    return render(request, 'empleados/crear_usuario.html', {'form': form})
+
+from django.contrib.auth import authenticate, login
+from django.shortcuts import render, redirect
 
 def login_trabajador_view(request):
-    form = LoginTrabajadorForm(request.POST or None)
-
-    if request.method == 'POST' and form.is_valid():
-        username = form.cleaned_data['usuario']
-        password = form.cleaned_data['contrasena']
-
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
         usuario = authenticate(request, username=username, password=password)
 
         if usuario is not None:
-            # Validamos que tenga perfil de trabajador
-            if hasattr(usuario, 'usuario') and usuario.usuario.cargo in ['Bodeguero', 'Vendedor', 'Administrador', 'Contadora']:
-                login(request, usuario)
-                return redirect('/bodega/pedidos/')
-            else:
-                messages.error(request, "No tienes permisos para ingresar aquí.")
+            login(request, usuario)
+            return redirect('lista_usuarios')  # o donde quieras redirigirlo
         else:
-            messages.error(request, "Credenciales inválidas.")
+            return redirect('sistema_bodega')
 
-    return render(request, 'login_trabajador.html', {'form': form})
+    return render(request, 'pagina/login_trabajador.html')
+
+
+
+
+
 
 
 
