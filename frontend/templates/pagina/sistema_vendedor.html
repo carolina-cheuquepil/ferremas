@@ -1,0 +1,109 @@
+{% extends 'base_interno.html' %}
+<!--Pestaña-->
+{% block titulo %}Sistema Vendedor{% endblock %} {% block contenido %}
+<div class="container mt-4">
+  <h2>Bienvenido al Panel de Ventas</h2>
+
+  <h4 class="mt-4">📦 Pedidos</h4>
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Cliente</th>
+        <th>Fecha</th>
+        <th>Total</th>
+        <th>Ver</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pedidos %}
+      <tr>
+        <td>{{ p.pedido_id }}</td>
+        <td>{{ p.cliente.nombre }}</td>
+        <td>{{ p.fecha }}</td>
+        <td>${{ p.total }}</td>
+        <td>
+          <a
+            href="{% url 'detalle_pedido' p.pedido_id %}"
+            class="btn btn-sm btn-info"
+            >Ver</a
+          >
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-4">💳 Pagos</h4>
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Monto</th>
+        <th>Pedido</th>
+        <th>Fecha</th>
+        <th>Método</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pago in pagos %}
+      <tr>
+        <td>{{ pago.pago_id }}</td>
+        <td>${{ pago.monto }}</td>
+        <td>{{ pago.pedido.pedido_id }}</td>
+        <td>{{ pago.fecha_pago }}</td>
+        <td>{{ pago.metodo_pago }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-4">📦 Productos en Bodega</h4>
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Producto</th>
+        <th>Sucursal</th>
+        <th>Stock</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in inventario %}
+      <tr>
+        <td>{{ item.producto.nombre_producto }}</td>
+        <td>{{ item.sucursal.nombre_sucursal }}</td>
+        <td>{{ item.stock_actual }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-4">💳 Pagos Realizados</h4>
+  <table class="table table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Pedido</th>
+        <th>Monto</th>
+        <th>Fecha</th>
+        <th>Método</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pago in pagos %}
+      <tr>
+        <td>{{ pago.pago_id }}</td>
+        <td>{{ pago.pedido.pedido_id }}</td>
+        <td>${{ pago.monto }}</td>
+        <td>{{ pago.fecha_pago|date:"d M Y H:i" }}</td>
+        <td>{{ pago.metodo_pago }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="5">No hay pagos registrados.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

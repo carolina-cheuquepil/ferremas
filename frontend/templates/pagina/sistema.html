@@ -1,4 +1,4 @@
-{% extends 'base_interno.html' %}
+{% extends 'base_interno.html' %} {% load custom_filters %}
 
 <!--Pestaña-->
 
@@ -41,15 +41,6 @@
     text-align: center;
   }
 </style>
-
-<div class="wrapper">
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <a href="/bodega/">Bodega</a>
-    <a href="/pedidos/">Pedidos</a>
-    <a href="/inventario/6/">Inventarios</a>
-  </div>
-
   <!-- MAIN CONTENT -->
   <div class="main-content">
     <h2>Bodega de <strong>Puerto Varas</strong></h2>
@@ -60,8 +51,9 @@
           <th>Pedido ID</th>
           <th>Cliente</th>
           <th>Fecha</th>
-          <th>Total</th>
+          <th>Estado del pedido</th>
           <th>Tipo de entrega</th>
+          <th>Ver detalle</th>
         </tr>
       </thead>
       <tbody>
@@ -70,8 +62,15 @@
           <td>{{ pedido.pedido_id }}</td>
           <td>{{ pedido.cliente.nombre }}</td>
           <td>{{ pedido.fecha }}</td>
-          <td>${{ pedido.total }}</td>
+          <td>{{ estado_actual|get_item:pedido.pedido_id }}</td>
           <td>{{ pedido.tipo_entrega }}</td>
+          <td>
+            <a
+              href="{% url 'detalle_pedido' pedido.pedido_id %}"
+              class="btn btn-sm btn-info"
+              >Ver Detalle</a
+            >
+          </td>
         </tr>
         {% endfor %}
       </tbody>

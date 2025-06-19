@@ -42,37 +42,46 @@
     </style>
     {% block extra_css %}{% endblock %}
   </head>
+
   <body>
-      <!-- NAVBAR -->
-
-      <nav class="navbar navbar-dark bg-dark">
-        <div
-          class="container-fluid d-flex justify-content-between align-items-center"
-        >
-          <img
-            src="{% static 'imagenes/logo.png' %}"
-            alt="Logo"
-            style="max-height: 50px"
-          />
-          <h1 class="navbar-brand mb-0 mx-auto">Sistema interno</h1>
-          <div>
-            {% if user.is_authenticated %}
-            <span class="text-warning">👤 {{ user.username }}</span>
-            <a class="nav-link d-inline text-danger" href="/logout/">Salir</a>
-            {% endif %}
-          </div>
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-dark bg-dark">
+      <div
+        class="container-fluid d-flex justify-content-between align-items-center"
+      >
+        <img
+          src="{% static 'imagenes/logo.png' %}"
+          alt="Logo"
+          style="max-height: 50px"
+        />
+        <h1 class="navbar-brand mb-0 mx-auto">Sistema interno</h1>
+        <div>
+          {% if user.is_authenticated %}
+          <span class="text-warning">👤 {{ user.username }}</span>
+          <a class="nav-link d-inline text-danger" href="/logout/">Salir</a>
+          {% endif %}
         </div>
-      </nav>
+      </div>
+    </nav>
 
-       <!--<div class="wrapper">
-       SIDEBAR 
+    <div class="wrapper">
+      <!-- SIDEBAR -->
       <div class="sidebar">
+        {% if user.is_authenticated %}
+        <!---->
+        {% if user.usuario.cargo == 'bodeguero' %}
         <a href="/bodega/">Bodega</a>
         <a href="/pedidos/">Pedidos</a>
         <a href="/inventario/6/">Inventarios</a>
-      </div> -->
-
-      
+        {% elif user.usuario.cargo == 'vendedor' %}
+        <a href="{% url 'sistema_vendedor' %}">Panel Ventas</a>
+        <a href="/pedidos/">Pedidos</a>
+        <a href="/pagos/">Pagos</a>
+        <a href="/productos/lista/">Productos</a>
+        {% endif %}
+        <!-- Fin de la verificación de usuario autenticado -->
+        {% endif %}
+      </div>
 
       <!-- CONTENIDO PRINCIPAL -->
       <div class="content">{% block contenido %}{% endblock %}</div>

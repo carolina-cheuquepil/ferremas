@@ -9,8 +9,9 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Long
 from django.shortcuts import render
 from .models import Producto, Marca, HistorialInventario, Sucursal
 from utils.divisas import obtener_valor_dolar
-from pedidos_app.models import Pedido
+from pedidos_app.models import Pedido, EstadoPedido, DetallePedido
 from inventario_app.models import HistorialInventario
+from datetime import datetime
 
 def inventario_por_sucursal(request, sucursal_id):
     sucursal = Sucursal.objects.get(pk=sucursal_id)
@@ -64,7 +65,35 @@ def lista_productos(request):
 def sistema_bodega(request):
     pedidos = Pedido.objects.all()
     inventarios = HistorialInventario.objects.all()
-    return render(request, 'pagina/sistema.html', {'pedidos': pedidos, 'inventarios': inventarios})
+
+    # Obtener el último estado de cada pedido
+    estado_actual = {}
+    for pedido in pedidos:
+        ultimo_estado = EstadoPedido.objects.filter(pedido=pedido).order_by('-fecha').first()
+        if ultimo_estado:
+            estado_actual[pedido.pedido_id] = ultimo_estado.estado.nombre_estado
+        else:
+            estado_actual[pedido.pedido_id] = "Sin estado"
+
+    return render(request, 'pagina/sistema.html', {
+        'pedidos': pedidos,
+        'inventarios': inventarios,
+        'estado_actual': estado_actual
+    })
+
+def descontar_stock_por_pedido(pedido):
+    detalles = DetallePedido.objects.filter(pedido_id=pedido.pedido_id)
+
+    for item in detalles:
+        HistorialInventario.objects.create(
+            producto_id=item.producto_id,
+            sucursal_id=pedido.sucursal_id,  # O asigna correctamente
+            cantidad=item.cantidad,
+            tipo_movimiento='salida',
+            fecha=datetime.now(),
+            detalle=f'Salida por pedido #{pedido.pedido_id}'
+        )
+
 
 
 

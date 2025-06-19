@@ -135,7 +135,7 @@ def crear_usuario_view(request):
             return redirect('lista_usuarios')
     else:
         form = UsuarioForm()
-    return render(request, 'empleados/crear_usuario.html', {'form': form})
+    return render(request, 'pagina/crear_usuario.html', {'form': form})
 
 from django.contrib.auth import authenticate, login
 from django.shortcuts import render, redirect
@@ -148,11 +148,41 @@ def login_trabajador_view(request):
 
         if usuario is not None:
             login(request, usuario)
-            return redirect('lista_usuarios')  # o donde quieras redirigirlo
+
+            # 🔍 Redirección por cargo
+            if usuario.usuario.cargo == 'Bodeguero':
+                return redirect('sistema_bodega')
+            elif usuario.usuario.cargo == 'Vendedor':
+                return redirect('sistema_vendedor')
+            else:
+                return redirect('acceso_denegado')  # Por si el cargo no es reconocido
         else:
-            return redirect('sistema_bodega')
+            return render(request, 'pagina/login_trabajador.html', {
+                'error': 'Usuario o contraseña incorrectos'
+            })
 
     return render(request, 'pagina/login_trabajador.html')
+
+from django.shortcuts import render, redirect
+from pedidos_app.models import Pedido
+from pagos_app.models import Pago
+from inventario_app.models import HistorialInventario
+
+def sistema_vendedor(request):
+    if not request.user.is_authenticated or request.user.usuario.cargo != 'Vendedor':
+        return redirect('acceso_denegado')
+
+    pedidos = Pedido.objects.all()
+    pagos = Pago.objects.all()
+    inventario = HistorialInventario.objects.all()
+
+    return render(request, 'pagina/sistema_vendedor.html', {
+        'pedidos': pedidos,
+        'pagos': pagos,
+        'inventario': inventario,
+    })
+
+
 
 
 

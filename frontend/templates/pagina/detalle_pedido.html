@@ -1,0 +1,81 @@
+{% extends 'base_interno.html' %}
+<!--Pestaña-->
+{% block titulo %}Detalle del Pedido{% endblock %} {% block contenido %}
+<div class="container mt-4">
+  <h3>Detalle del Pedido N° {{ pedido.pedido_id }}</h3>
+  <p><strong>Cliente:</strong> {{ pedido.cliente.nombre }}</p>
+  <p><strong>Fecha:</strong> {{ pedido.fecha }}</p>
+  <p><strong>Total:</strong> ${{ pedido.total }}</p>
+
+  <table class="table table-bordered mt-4">
+    <thead class="table-dark">
+      <tr>
+        <th>Producto</th>
+        <th>Cantidad</th>
+        <th>Precio unitario</th>
+        <th>Total</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in detalles %}
+      <tr>
+        <td>{{ d.producto.nombre_producto }}</td>
+        <td>{{ d.cantidad }}</td>
+        <td>${{ d.precio_unitario }}</td>
+        <td>${{ d.total_linea }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-5">Historial de Estado</h4>
+
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>Estado</th>
+        <th>Fecha</th>
+        <th>Observaciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for estado in historial %}
+      <tr>
+        <td>{{ estado.estado.nombre_estado }}</td>
+        <td>{{ estado.fecha }}</td>
+        <td>{{ estado.observacion }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="3">Sin historial de estado.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <h4 class="mt-5">Actualizar Estado del Pedido</h4>
+
+  <form
+    method="POST"
+    action="{% url 'actualizar_estado_pedido' pedido.pedido_id %}"
+  >
+    {% csrf_token %}
+    <div class="mb-3">
+      <label for="estado" class="form-label">Nuevo estado</label>
+      <select name="estado_id" class="form-select" required>
+        {% for estado in estados %}
+        <option value="{{ estado.estado_id }}">
+          {{ estado.nombre_estado }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="mb-3">
+      <input type="text" name="observacion" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-success">Actualizar Estado</button>
+  </form>
+
+  <a href="{% url 'sistema_bodega' %}" class="btn btn-secondary">⬅ Volver</a>
+</div>
+{% endblock %}
