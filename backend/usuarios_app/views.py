@@ -13,19 +13,14 @@ class RegistroForm(forms.ModelForm):
         model = Cliente
         fields = ['nombre', 'correo', 'direccion', 'telefono', 'rut', 'contrasena']
 
-#------------- 1. Formulario de login --------------------
+#1. Formulario de login --------------------
 #Clientes
 class LoginForm(forms.Form):
     correo = forms.EmailField(label="Correo")
     contrasena = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
 
-#Trabajadores
-class LoginTrabajadorForm(forms.Form):
-    usuario = forms.CharField(label="Usuario")
-    contrasena = forms.CharField(widget=forms.PasswordInput, label="Contraseña")
 
-#------------- 2. Vistas  --------------------
-#Clientes
+#------------- Parte 2: Registro de cliente 🤗--------------------
 def registro_view(request):
     if request.method == 'POST':
         form = RegistroForm(request.POST)
@@ -52,9 +47,8 @@ def registro_view(request):
             # Paso 6: Iniciar sesión automáticamente con ese usuario
             login(request, user)
 
-            # Paso 7: Redirigir o mostrar mensaje de bienvenida
-            return render(request, 'bienvenida.html', {'nombre': cliente.nombre})
-
+            # Paso 7: Redirigir a la lista de productos
+            return redirect('/productos/lista/')  
     else:
         form = RegistroForm()
 
@@ -62,7 +56,7 @@ def registro_view(request):
 
 
 
-# 🧠 Vista de login
+# ------------- Parte 3: Login de cliente 😊--------------------
 def login_view(request):
     form = LoginForm(request.POST or None)
 
@@ -78,7 +72,7 @@ def login_view(request):
             login(request, usuario)
 
             # Paso 3: Mostrar bienvenida personalizada
-            return render(request, 'bienvenida.html', {'nombre': usuario.cliente.nombre})
+            return redirect('/productos/lista/')  
         else:
             # Paso 4: Mostrar error si no se autenticó
             form.add_error(None, "Credenciales inválidas")
@@ -94,7 +88,7 @@ def logout_view(request):
 
 
 
-# ---------------- PARTE 1 Empleados--------------------
+# PARTE 1 Empleados--------------------
 
 def lista_usuarios_view(request):
     usuarios = Usuario.objects.all()
@@ -127,18 +121,6 @@ def eliminar_usuario_view(request, usuario_id):
 
 # Procesa formulario: Frontend 2 TRABAJADORES 
 
-def crear_usuario_view(request):
-    if request.method == 'POST':
-        form = UsuarioForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('lista_usuarios')
-    else:
-        form = UsuarioForm()
-    return render(request, 'pagina/crear_usuario.html', {'form': form})
-
-from django.contrib.auth import authenticate, login
-from django.shortcuts import render, redirect
 
 def login_trabajador_view(request):
     if request.method == 'POST':
@@ -147,21 +129,27 @@ def login_trabajador_view(request):
         usuario = authenticate(request, username=username, password=password)
 
         if usuario is not None:
-            login(request, usuario)
+            # Verificar si tiene un perfil de Usuario
+            if hasattr(usuario, 'usuario'):
+                login(request, usuario)
 
-            # 🔍 Redirección por cargo
-            if usuario.usuario.cargo == 'Bodeguero':
-                return redirect('sistema_bodega')
-            elif usuario.usuario.cargo == 'Vendedor':
-                return redirect('sistema_vendedor')
+                if usuario.usuario.cargo == 'Bodeguero':
+                    return redirect('sistema_bodega')
+                elif usuario.usuario.cargo == 'Vendedor':
+                    return redirect('sistema_vendedor')
+                else:
+                    return redirect('acceso_denegado')
             else:
-                return redirect('acceso_denegado')  # Por si el cargo no es reconocido
+                return render(request, 'pagina/login_trabajador.html', {
+                    'error': 'Este usuario no tiene un perfil asociado en la tabla Usuario.'
+                })
         else:
             return render(request, 'pagina/login_trabajador.html', {
                 'error': 'Usuario o contraseña incorrectos'
             })
 
     return render(request, 'pagina/login_trabajador.html')
+
 
 from django.shortcuts import render, redirect
 from pedidos_app.models import Pedido
@@ -181,6 +169,32 @@ def sistema_vendedor(request):
         'pagos': pagos,
         'inventario': inventario,
     })
+
+
+def crear_usuario_form(request):
+    if request.method == 'POST':
+        form = UsuarioForm(request.POST)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+
+        if form.is_valid():
+            # 1. Crear el usuario de Django (auth_user)
+            user = User.objects.create_user(username=username, password=password)
+            
+            # 2. Crear el usuario personalizado y asociar con auth_user
+            usuario = form.save(commit=False)
+            usuario.user = user
+            usuario.save()
+
+            return redirect('lista_usuarios')
+        else:
+            return render(request, 'pagina/crear_usuario.html', {'form': form, 'error': 'Datos inválidos'})
+
+    else:
+        form = UsuarioForm()
+    return render(request, 'pagina/crear_usuario.html', {'form': form})
+
+
 
 
 

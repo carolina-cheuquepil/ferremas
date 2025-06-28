@@ -5,7 +5,8 @@ from .views_pedidos.historial_views import (actualizar_estado_pedido_put, actual
 crear_estado_pedido, listar_estados_pedido, obtener_estado_pedido, eliminar_estado_pedido)
 from .views_pedidos.detalle_views import (crear_detalle_pedido, listar_detalles_pedido, obtener_detalle_pedido,
 actualizar_detalle_pedido_patch, actualizar_detalle_pedido_put, eliminar_detalle_pedido)
-from .views import agregar_producto_al_carrito,ver_carrito, ver_carrito_html, detalle_pedido_view, actualizar_estado_pedido
+from .views import (agregar_producto_al_carrito,ver_carrito, ver_carrito_html, detalle_pedido_view, 
+actualizar_estado_pedido, actualizar_entrega)
 
 #path('pedidos/', include('pedidos_app.urls')),
 urlpatterns = [
@@ -35,11 +36,11 @@ urlpatterns = [
     #Frontend 2
     path('carrito/agregar/', agregar_producto_al_carrito, name='api_agregar_carrito'),
     path('carrito/<int:cliente_id>/', ver_carrito),
-    path('carrito/html/<int:cliente_id>/', ver_carrito_html),
-    path('pedido/<int:pedido_id>/', detalle_pedido_view, name='detalle_pedido'),
-    path('pedido/<int:pedido_id>/estado/', actualizar_estado_pedido, name='actualizar_estado_pedido'),
-
-
+    path('carrito/html/<int:cliente_id>/', ver_carrito_html, name='ver_carrito_html'), #Parte 4
+    path('pedidos/actualizar_entrega/<int:pedido_id>/', actualizar_entrega, name='actualizar_entrega'),
+    path('pedido/<int:pedido_id>/', detalle_pedido_view, name='detalle_pedido'), #Parte 6 Pendiente!!!!!!
+    #Funcionalidad de actualizar estado del pedido
+    path('pedido/<int:pedido_id>/estado/', actualizar_estado_pedido, name='actualizar_estado_pedido'), #parte 5
 
 
 ]

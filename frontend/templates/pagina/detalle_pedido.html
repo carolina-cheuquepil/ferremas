@@ -1,6 +1,12 @@
 {% extends 'base_interno.html' %}
 <!--Pestaña-->
-{% block titulo %}Detalle del Pedido{% endblock %} {% block contenido %}
+{% block titulo %}Detalle del Pedido{% endblock %}
+<!--Barra lateral-->
+{% block sidebar %}
+<a href="/bodega/">Bodega</a>
+<a href="/pedidos/">Pedidos</a>
+<a href="/inventario/6/">Inventarios</a>
+{% endblock %} {% block contenido %}
 <div class="container mt-4">
   <h3>Detalle del Pedido N° {{ pedido.pedido_id }}</h3>
   <p><strong>Cliente:</strong> {{ pedido.cliente.nombre }}</p>

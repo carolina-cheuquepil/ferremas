@@ -8,6 +8,13 @@
 <h5>
   Pedido N° {{ pedido.pedido_id }} - Tipo de entrega: {{ pedido.tipo_entrega }}
 </h5>
+<br />
+<div>
+  <p><strong>Valor del dólar usado:</strong> ${{ pedido.valor_dolar_usado }}</p>
+  <p>
+    <strong>Total en dólares:</strong> ${{ pedido.total_usd|floatformat:2 }}
+  </p>
+</div>
 <table class="table table-bordered table-hover mt-4">
   <thead class="table-light">
     <tr>
@@ -32,18 +39,55 @@
 
 <div class="text-end mt-3">
   <p><strong>Total en pesos:</strong> ${{ pedido.total|floatformat:0 }}</p>
-  <p><strong>Valor del dólar usado:</strong> ${{ pedido.valor_dolar_usado }}</p>
-  <p>
-    <strong>Total en dólares:</strong> ${{ pedido.total_usd|floatformat:2 }}
-  </p>
 </div>
 
-<div class="text-center mt-4">
-  <a
-    href="{% url 'iniciar_pago' pedido.pedido_id %}"
-    class="btn btn-primary btn-lg"
-    >💳 Pagar ahora</a
-  >
+<form method="post" action="{% url 'actualizar_entrega' pedido.pedido_id %}" class="mb-4">
+  {% csrf_token %}
+  <label for="tipo_entrega"><strong>Selecciona tipo de entrega:</strong></label>
+  <select name="tipo_entrega" id="tipo_entrega" class="form-select w-50 mx-auto my-2" required onchange="mostrarDireccion()">
+    <option value="retiro" {% if pedido.tipo_entrega == 'retiro' %}selected{% endif %}>Retiro en tienda</option>
+    <option value="domicilio" {% if pedido.tipo_entrega == 'domicilio' %}selected{% endif %}>Despacho a domicilio</option>
+  </select>
+
+  <div id="campo-direccion" class="my-3" style="display: none;">
+    <label for="direccion"><strong>Dirección de envío:</strong></label>
+    <input type="text" class="form-control w-50 mx-auto" name="direccion" id="direccion" value="{{ pedido.cliente.direccion }}">
+  </div>
+
+  <div class="text-center mt-4">
+  <button type="submit" class="btn btn-success px-4">
+    Actualizar entrega
+  </button>
 </div>
+
+</form>
+
+<div class="text-center mt-4">
+  {% if pedido.pedido_id %}
+  <div class="text-center mt-4">
+    <a
+      href="{% url 'iniciar_pago' pedido.pedido_id %}"
+      class="btn btn-primary btn-lg"
+    >
+      💳 Pagar ahora
+    </a>
+  </div>
+  {% else %}
+  <div class="alert alert-warning text-center">
+    El pedido no está disponible para pagar.
+  </div>
+  {% endif %}
+</div>
+
+<script>
+  function mostrarDireccion() {
+    const tipoEntrega = document.getElementById("tipo_entrega").value;
+    const campoDireccion = document.getElementById("campo-direccion");
+    campoDireccion.style.display = tipoEntrega === "domicilio" ? "block" : "none";
+  }
+
+  // Ejecutar al cargar si ya estaba seleccionado "domicilio"
+  document.addEventListener("DOMContentLoaded", mostrarDireccion);
+</script>
 
 {% endblock %}

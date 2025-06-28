@@ -67,20 +67,22 @@
     <div class="wrapper">
       <!-- SIDEBAR -->
       <div class="sidebar">
+        {% block sidebar %}
+        <!-- Enlaces de navegación -->
         {% if user.is_authenticated %}
         <!---->
-        {% if user.usuario.cargo == 'bodeguero' %}
+        {% if user.usuario.cargo == 'Bodeguero'%}
         <a href="/bodega/">Bodega</a>
         <a href="/pedidos/">Pedidos</a>
         <a href="/inventario/6/">Inventarios</a>
-        {% elif user.usuario.cargo == 'vendedor' %}
+        {% elif user.usuario.cargo == 'Vendedor' %}
         <a href="{% url 'sistema_vendedor' %}">Panel Ventas</a>
         <a href="/pedidos/">Pedidos</a>
         <a href="/pagos/">Pagos</a>
         <a href="/productos/lista/">Productos</a>
-        {% endif %}
-        <!-- Fin de la verificación de usuario autenticado -->
-        {% endif %}
+        {% endif %} {% endif %}
+        <!---->
+        {% endblock %}
       </div>
 
       <!-- CONTENIDO PRINCIPAL -->

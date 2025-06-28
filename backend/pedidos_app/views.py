@@ -10,6 +10,7 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+import logging
 
 @api_view(['POST'])
 def agregar_producto_al_carrito(request):
@@ -95,6 +96,7 @@ def ver_carrito(request, cliente_id):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
+#Parte 4
 def ver_carrito_html(request, cliente_id):
     pedido = Pedido.objects.filter(cliente_id=cliente_id, estadopedido__estado_id=1).last()
     if not pedido:
@@ -109,6 +111,26 @@ def ver_carrito_html(request, cliente_id):
         'pedido': pedido,
         'detalles': detalles
     })
+
+@csrf_exempt
+def actualizar_entrega(request, pedido_id):
+    if request.method == 'POST':
+        tipo_entrega = request.POST.get('tipo_entrega')
+        direccion = request.POST.get('direccion')
+        
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+        pedido.tipo_entrega = tipo_entrega
+        
+        if tipo_entrega == 'domicilio' and direccion:
+            pedido.cliente.direccion = direccion
+            pedido.cliente.save()
+        
+        pedido.save()
+    return redirect('ver_carrito_html', cliente_id=pedido.cliente_id)
+
+    
+
+
 
 #Sistema interno: Ver detalle de un pedido específico
 
@@ -144,7 +166,7 @@ def actualizar_estado_pedido(request, pedido_id):
         return redirect('detalle_pedido', pedido_id=pedido_id)
 
     
-
+#Parte 6 Pendiente!!!!!
 def detalle_pedido_view(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
     detalles = DetallePedido.objects.filter(pedido_id=pedido_id)
@@ -157,4 +179,18 @@ def detalle_pedido_view(request, pedido_id):
         'historial': historial,
         'estados': estados
     })
+
+"""Configuración del logger para registrar eventos
+
+logger = logging.getLogger('django')
+
+def detalle_pedido(request, pedido_id):
+    try:
+        pedido = get_object_or_404(Pedido, pedido_id=pedido_id)
+        logger.info(f'Se accedió al detalle del pedido {pedido_id} por el usuario {request.user.username}')
+        return render(request, 'pedidos_app/detalle.html', {'pedido': pedido})
+    except Exception as e:
+        logger.error(f'Error al cargar el pedido {pedido_id}: {str(e)}')
+        return render(request, 'pedidos_app/error.html')"""
+
 

@@ -29,19 +29,26 @@
           <strong>🇺🇸 {{ producto.precio_usd }}</strong>
         </p>
         {% if user.is_authenticated %}
-        <button
-          class="btn btn-comprar w-100 agregar-carrito"
-          data-producto-id="{{ producto.producto_id }}"
-        >
-          Comprar
-        </button>
+        <div class="input-group mb-2">
+          <input
+            type="number"
+            class="form-control cantidad-input"
+            min="1"
+            value="1"
+          />
+          <button
+            class="btn btn-comprar agregar-carrito"
+            data-producto-id="{{ producto.producto_id }}"
+          >
+            Comprar
+          </button>
+        </div>
         {% else %}
         <a
           href="/api/clientes/login/form/"
           class="btn btn-outline-primary w-100"
+          >Comprar</a
         >
-          Comprar
-        </a>
         {% endif %}
       </div>
     </div>
@@ -56,6 +63,9 @@
     botones.forEach((boton) => {
       boton.addEventListener("click", function () {
         const productoId = this.getAttribute("data-producto-id");
+        const cantidadInput =
+          this.closest(".input-group").querySelector(".cantidad-input");
+        const cantidad = parseInt(cantidadInput.value);
 
         fetch("/pedidos/carrito/agregar/", {
           method: "POST",
@@ -63,19 +73,11 @@
             "Content-Type": "application/json",
             "X-CSRFToken": getCookie("csrftoken"),
           },
-          body: JSON.stringify({
-            producto_id: productoId,
-            cantidad: 1,
-          }),
+          body: JSON.stringify({ producto_id: productoId, cantidad: cantidad }),
         })
           .then((response) => response.json())
-          .then((data) => {
-            alert(data.mensaje || "Producto agregado al carrito");
-          })
-          .catch((error) => {
-            alert("Error al agregar al carrito");
-            console.error(error);
-          });
+          .then((data) => alert(data.mensaje || "Producto agregado al carrito"))
+          .catch((error) => alert("Error al agregar al carrito"));
       });
     });
 

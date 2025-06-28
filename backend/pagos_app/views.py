@@ -27,7 +27,7 @@ def iniciar_pago(request, pedido_id):
     buy_order = str(pedido.pedido_id)
     session_id = str(request.user.id)
     amount = pedido.total
-    return_url = 'http://localhost:8000/pagos/retorno/'
+    return_url = request.build_absolute_uri('/pagos/retorno/')
 
     response = transaction.create(buy_order, session_id, amount, return_url)
 

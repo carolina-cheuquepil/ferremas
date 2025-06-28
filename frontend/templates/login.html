@@ -1,10 +1,29 @@
-{% extends 'base.html' %}
-<!--titulo-->
-{% block titulo %}Iniciar sesión{% endblock %} {% block subtitulo %}
-<h2 class="text-center">Inicia sesión</h2>
-{% endblock %} {% block contenido %}
-<form method="post" class="mx-auto" style="max-width: 400px">
-  {% csrf_token %} {{ form.as_p }}
+{% extends 'base.html' %} {% load widget_tweaks %}
+
+<!-- Pestaña -->
+{% block titulo %}Iniciar sesión{% endblock %}
+
+<!-- Título Parte 3: Log in cliente 😊 -->
+{% block subtitulo %}
+<h2 class="text-center mb-4">Inicia sesión</h2>
+{% endblock %}
+
+<!-- Contenido -->
+{% block contenido %}
+<form
+  method="post"
+  class="mx-auto shadow p-4 rounded-3"
+  style="max-width: 500px; background: #fff"
+>
+  {% csrf_token %}
+  <div class="mb-3">
+    <label for="id_username" class="form-label">Correo:</label>
+    {{ form.correo|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    <label for="id_password" class="form-label">Contraseña:</label>
+    {{ form.contrasena|add_class:"form-control" }}
+  </div>
   <button type="submit" class="btn btn-primary w-100">Entrar</button>
 </form>
 {% endblock %}

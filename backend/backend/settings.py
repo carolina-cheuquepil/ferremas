@@ -155,3 +155,23 @@ TRANSBANK = {
     "API_KEY": os.environ.get("TBK_API_KEY", "579B532A7440BB0C9079DED94D31EA1615BACEB56610332264630D42D0A36B1C"),
     "ENV": os.environ.get("TBK_ENV", "integration"),  # integration o production
 }
+
+# Configuración de logging para registrar eventos de depuración
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'archivo_log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'registro_debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['archivo_log'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

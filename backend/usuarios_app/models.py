@@ -9,7 +9,6 @@ class Usuario(models.Model):
     telefono = models.CharField(max_length=20)
     cargo = models.CharField(max_length=50)
     rut = models.CharField(max_length=20)
-    contrasena = models.CharField(max_length=255) 
     #Usuario relacionado con el modelo User de Django
     #user_id porque usuario_id ya era utilizado en la tabla de Usuario
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True, db_column='user_id')
