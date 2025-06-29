@@ -1,0 +1,31 @@
+{% extends 'base_interno.html' %}
+<!--Pestaña-->
+{% block titulo %}Gestión de pagos{% endblock %} {% block contenido %}
+<div class="container mt-4">
+  <h2>Gestión de pagos</h2>
+
+  <h4 class="mt-4">💳 Pagos</h4>
+  <table class="table table-bordered">
+    <thead class="table-light">
+      <tr>
+        <th>ID</th>
+        <th>Monto</th>
+        <th>Pedido</th>
+        <th>Fecha</th>
+        <th>Método</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for pago in pagos %}
+      <tr>
+        <td>{{ pago.pago_id }}</td>
+        <td>${{ pago.monto }}</td>
+        <td>{{ pago.pedido.pedido_id }}</td>
+        <td>{{ pago.fecha_pago }}</td>
+        <td>{{ pago.metodo_pago }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

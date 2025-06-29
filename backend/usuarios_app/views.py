@@ -194,6 +194,11 @@ def crear_usuario_form(request):
         form = UsuarioForm()
     return render(request, 'pagina/crear_usuario.html', {'form': form})
 
+def vista_pago(request):
+    pagos = Pago.objects.all()
+    return render(request, 'pagina/pago.html', {'pagos': pagos})
+
+
 
 
 

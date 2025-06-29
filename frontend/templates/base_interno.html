@@ -78,8 +78,8 @@
         {% elif user.usuario.cargo == 'Vendedor' %}
         <a href="{% url 'sistema_vendedor' %}">Panel Ventas</a>
         <a href="/pedidos/">Pedidos</a>
-        <a href="/pagos/">Pagos</a>
-        <a href="/productos/lista/">Productos</a>
+        <a href="/api/pagos/">Pagos</a>
+        <a href="/inventario/6/">Inventarios</a>
         {% endif %} {% endif %}
         <!---->
         {% endblock %}

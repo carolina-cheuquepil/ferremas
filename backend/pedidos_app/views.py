@@ -167,18 +167,40 @@ def actualizar_estado_pedido(request, pedido_id):
 
     
 #Parte 6 Pendiente!!!!!
+from django.contrib.auth.models import User
+
 def detalle_pedido_view(request, pedido_id):
     pedido = get_object_or_404(Pedido, pk=pedido_id)
     detalles = DetallePedido.objects.filter(pedido_id=pedido_id)
     historial = EstadoPedido.objects.filter(pedido_id=pedido_id).order_by('-fecha')
-    estados = Estado.objects.all()  # Para el select
+    estados = Estado.objects.all()
+
+     # ✅ Parte 6: Calcular total por detalle
+    for d in detalles:
+        d.total = d.cantidad * d.precio_unitario  # Agrega el total como atributo temporal
+
+    # Creamos un diccionario con el nombre de cada usuario
+    usuarios = {u.id: u.username for u in User.objects.all()}
+
+    # Enlazamos nombre de usuario en cada cambio de estado
+    historial_con_nombre = []
+    for h in historial:
+        nombre_usuario = usuarios.get(h.actor_id, 'Desconocido') if h.actor_tipo == 'usuario' else 'cliente'
+        historial_con_nombre.append({
+            'estado': h.estado,
+            'fecha': h.fecha,
+            'actor': nombre_usuario,
+            'actor_tipo': h.actor_tipo
+        })
 
     return render(request, 'pagina/detalle_pedido.html', {
         'pedido': pedido,
         'detalles': detalles,
-        'historial': historial,
+        'historial': historial_con_nombre,
         'estados': estados
     })
+
+
 
 """Configuración del logger para registrar eventos
 
