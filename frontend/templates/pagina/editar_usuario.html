@@ -3,9 +3,16 @@
 
 {% block titulo %}Editar Empleado{% endblock %} {% block contenido %}
 <h2>Editar Empleado</h2>
-<form method="post">
-  {% csrf_token %} {{ form.as_p }}
-  <button type="submit" class="btn btn-primary">Actualizar</button>
+
+<form
+  method="POST"
+  action="{% url 'editar_usuario' usuario.usuario_id %}"
+  class="p-3"
+>
+  {% csrf_token %}
+  <div class="mb-3">{{ form.as_p }}</div>
+  <button type="submit" class="btn btn-primary">Guardar</button>
   <a href="{% url 'lista_usuarios' %}" class="btn btn-secondary">Cancelar</a>
 </form>
+
 {% endblock %}

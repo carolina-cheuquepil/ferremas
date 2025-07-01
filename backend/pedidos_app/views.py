@@ -133,7 +133,7 @@ def actualizar_entrega(request, pedido_id):
 
 
 #Sistema interno: Ver detalle de un pedido específico
-
+#Descuenta INVENTARIO si el estado es "Enviado"
 @csrf_exempt
 def actualizar_estado_pedido(request, pedido_id):
     if request.method == 'POST':

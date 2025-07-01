@@ -12,10 +12,18 @@ def obtener_valor_dolar():
             desde=hoy,
             hasta=hoy
         )
+
+        if datos.empty:
+            print("⚠️ No hay datos disponibles para hoy. Se usará valor por defecto.")
+            return Decimal("943.40")
+
         valor = datos.iloc[0]['dolar']
-        print("Dólar obtenido:", valor)  # 👈 Agrega esta línea
+        print("✅ Dólar obtenido:", valor)
         return Decimal(valor)
+
     except Exception as e:
         print("❌ Error al obtener el dólar:", e)
-        return Decimal("0")
+        return Decimal("943.40")
+
+
 

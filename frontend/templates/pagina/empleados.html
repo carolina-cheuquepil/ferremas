@@ -17,7 +17,6 @@
       <th>Dirección</th>
       <th>Teléfono</th>
       <th>Cargo</th>
-      <th>RUT</th>
       <th>Acciones</th>
     </tr>
   </thead>
@@ -30,10 +29,9 @@
       <td>{{ usuario.direccion }}</td>
       <td>{{ usuario.telefono }}</td>
       <td>{{ usuario.cargo }}</td>
-      <td>{{ usuario.rut }}</td>
       <td>
         <a
-          href="{% url 'editar_usuario_form' usuario.usuario_id %}"
+          href="{% url 'editar_usuario' usuario.usuario_id %}"
           class="btn btn-sm btn-primary"
           >Editar</a
         >

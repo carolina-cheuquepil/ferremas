@@ -98,8 +98,10 @@ def lista_usuarios_view(request):
 
 
 # Editar
-def editar_usuario_view(request, usuario_id):
+
+def editar_usuario(request, usuario_id):
     usuario = get_object_or_404(Usuario, pk=usuario_id)
+
     if request.method == 'POST':
         form = UsuarioForm(request.POST, instance=usuario)
         if form.is_valid():
@@ -107,7 +109,9 @@ def editar_usuario_view(request, usuario_id):
             return redirect('lista_usuarios')
     else:
         form = UsuarioForm(instance=usuario)
-    return render(request, 'pagina/editar_usuario.html', {'form': form})
+
+    return render(request, 'pagina/editar_usuario.html', {'form': form, 'usuario': usuario})
+
 
 # Eliminar
 def eliminar_usuario_view(request, usuario_id):
@@ -137,6 +141,8 @@ def login_trabajador_view(request):
                     return redirect('sistema_bodega')
                 elif usuario.usuario.cargo == 'Vendedor':
                     return redirect('sistema_vendedor')
+                elif usuario.usuario.cargo == 'Administrador':
+                    return redirect('lista_usuarios')
                 else:
                     return redirect('acceso_denegado')
             else:

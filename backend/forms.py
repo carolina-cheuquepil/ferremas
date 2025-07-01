@@ -10,4 +10,9 @@ class UsuarioForm(forms.ModelForm):
     class Meta:
         model = Usuario
         fields = ['nombre', 'correo', 'direccion', 'telefono', 'cargo', 'rut']
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for campo in self.fields.values():
+            campo.widget.attrs.update({'class': 'form-control'})
 

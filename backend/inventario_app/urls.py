@@ -4,7 +4,7 @@ from .view_tablas.categoria_views import listar_categorias, obtener_categoria
 from .view_tablas.marca_views import all_marcas, get_by_id, crear_marca
 from .view_tablas.sucursal_views import listar_sucursales, obtener_sucursal
 from .view_tablas.inventario_views import get_all_inventario, crear_registro, actualizar_registro, actualizar_registro_parcial, eliminar_registro
-from .views import inventario_por_sucursal, lista_productos, sistema_bodega
+from .views import inventario_por_sucursal, lista_productos, sistema_bodega, mostrar_productos, crear_producto_form
 # path('', include('inventario_app.urls')),
 urlpatterns = [
     path('productos/', productos_api, name='productos_api'),
@@ -32,6 +32,8 @@ urlpatterns = [
     path('inventario/<int:sucursal_id>/', inventario_por_sucursal, name='inventario_sucursal'),
     path('productos/lista/', lista_productos, name='lista_productos'), #Parte 1
     path('pedidos/', sistema_bodega, name='sistema_bodega'),
+    path('mostrar_productos/', mostrar_productos, name='mostrar_productos'),  # Parte 2
+    path('crear_producto/', crear_producto_form, name='crear_producto'),  # Parte 3
 ]
 
 

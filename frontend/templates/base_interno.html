@@ -80,6 +80,10 @@
         <a href="/pedidos/">Pedidos</a>
         <a href="/api/pagos/">Pagos</a>
         <a href="/inventario/6/">Inventarios</a>
+        {% elif user.usuario.cargo == 'Administrador' %}
+        <a href="api/empleados/">Empleados</a>
+        <a href="/api/pagos/">Pagos</a>
+        <a href="/mostrar_productos/">Productos</a>
         {% endif %} {% endif %}
         <!---->
         {% endblock %}
