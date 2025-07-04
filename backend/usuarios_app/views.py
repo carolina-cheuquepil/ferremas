@@ -84,6 +84,11 @@ def logout_view(request):
     messages.success(request, "Sesión cerrada correctamente 👋")
     return redirect('/productos/lista/')  # Redirige al inicio o donde quieras
 
+def logout_trabajador_view(request):
+    logout(request)
+    messages.success(request, "Sesión cerrada correctamente 👋")
+    return redirect('/api/bodega/login/')  # Redirige al inicio o donde quieras
+
 
 
 

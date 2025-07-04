@@ -3,7 +3,7 @@ from .view_tablas.cliente_views import (ClienteListView, crear_cliente, obtener_
 actualizar_cliente, eliminar_cliente, login_cliente)
 from .view_tablas.usuario_views import get_all_usuarios, get_by_id, crear_usuario, actualizar_usuario, eliminar_usuario
 from .views import (login_view, registro_view, logout_view, login_trabajador_view, lista_usuarios_view, 
-crear_usuario_form, editar_usuario, eliminar_usuario_view, sistema_vendedor, vista_pago)
+crear_usuario_form, editar_usuario, eliminar_usuario_view, sistema_vendedor, vista_pago, logout_trabajador_view)
 
 # path('api/', include('usuarios_app.urls'))
 
@@ -27,12 +27,13 @@ urlpatterns = [
     path('clientes/logout/', logout_view, name='logout'),
     #probando-------------------------------------------
     path('bodega/login/', login_trabajador_view, name='login_trabajador'),
-    path('empleados/', lista_usuarios_view, name='lista_usuarios'), #Trabajando hoy 29 junio
+    path('empleados/', lista_usuarios_view, name='lista_usuarios'), ##Ahora!!!
     path('empleados/crear/', crear_usuario_form, name='crear_usuario_form'), 
     path('empleados/<int:usuario_id>/editar/', editar_usuario, name='editar_usuario'),
     path('empleados/<int:usuario_id>/eliminar/', eliminar_usuario_view, name='eliminar_usuario_form'),
-    path('ventas/', sistema_vendedor, name='sistema_vendedor'),
+    path('ventas/', sistema_vendedor, name='sistema_vendedor'),  
     path('pagos/', vista_pago, name='vista_pago'),
+    path('trabajadores/logout/', logout_trabajador_view, name='logout_trabajador'), #Redirige al inicio o donde quieras
 
 
 ]

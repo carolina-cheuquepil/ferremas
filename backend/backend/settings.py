@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     'usuarios_app',
     'pedidos_app',
     'pagos_app',
-    'widget_tweaks', # Para usar widgets-tweak en el frontend
+    'widget_tweaks', # Para usar widgets-tweak en el frontend Formularios
 ]
 
 MIDDLEWARE = [

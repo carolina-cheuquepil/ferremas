@@ -1,7 +1,7 @@
 #Paso 1: Fronend
 from django import forms
-from django.contrib.auth.models import User
 from usuarios_app.models import Usuario
+from inventario_app.models import Producto
 
 class UsuarioForm(forms.ModelForm):
     username = forms.CharField(max_length=150)
@@ -15,4 +15,10 @@ class UsuarioForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         for campo in self.fields.values():
             campo.widget.attrs.update({'class': 'form-control'})
+
+class ProductoForm(forms.ModelForm):
+    class Meta:
+        model = Producto
+        fields = '__all__'
+
 

@@ -58,7 +58,11 @@
         <div>
           {% if user.is_authenticated %}
           <span class="text-warning">👤 {{ user.username }}</span>
-          <a class="nav-link d-inline text-danger" href="/logout/">Salir</a>
+          <a
+            class="nav-link d-inline text-danger"
+            href="/api/trabajadores/logout/"
+            >Salir</a
+          >
           {% endif %}
         </div>
       </div>
@@ -81,7 +85,7 @@
         <a href="/api/pagos/">Pagos</a>
         <a href="/inventario/6/">Inventarios</a>
         {% elif user.usuario.cargo == 'Administrador' %}
-        <a href="api/empleados/">Empleados</a>
+        <a href="/api/empleados/">Empleados</a>
         <a href="/api/pagos/">Pagos</a>
         <a href="/mostrar_productos/">Productos</a>
         {% endif %} {% endif %}

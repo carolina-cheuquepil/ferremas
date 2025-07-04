@@ -1,0 +1,41 @@
+{% extends 'base_interno.html' %}{% load widget_tweaks %}
+
+<!--Pestaña PASO 3-->
+{% block titulo %}Nuevo Producto{% endblock %} {% block contenido %}
+<h2>Crear Nuevo Producto</h2>
+<form method="POST">
+  {% csrf_token %}
+  <div class="mb-3">
+    {{ form.nombre_producto.label_tag }}
+    {{form.nombre_producto|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    {{ form.categoria.label_tag }} {{ form.categoria|add_class:"form-select" }}
+  </div>
+  <div class="mb-3">
+    {{ form.marca.label_tag }} {{ form.marca|add_class:"form-select" }}
+  </div>
+  <div class="mb-3">
+    {{ form.modelo.label_tag }} {{ form.modelo|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    {{ form.precio.label_tag }} {{ form.precio|add_class:"form-control" }}
+  </div>
+  <div class="mb-3">
+    {{ form.codigo_sku.label_tag }}
+    <!--Prettier ignore-->
+    {{ form.codigo_sku|add_class:"form-control"}}
+  </div>
+  <div class="mb-3">
+    {{ form.imagen.label_tag }} {{ form.imagen|add_class:"form-control" }}
+  </div>
+  <div class="form-check mb-3">
+    {{ form.publicado|add_class:"form-check-input" }}
+    <!---->
+    {{form.publicado.label_tag }}
+  </div>
+
+  <button type="submit" class="btn btn-success">Guardar</button>
+  <a href="{% url 'mostrar_productos' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

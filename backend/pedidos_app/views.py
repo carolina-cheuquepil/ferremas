@@ -98,12 +98,22 @@ def ver_carrito(request, cliente_id):
 
 #Parte 4
 def ver_carrito_html(request, cliente_id):
-    pedido = Pedido.objects.filter(cliente_id=cliente_id, estadopedido__estado_id=1).last()
-    if not pedido:
-        return render(request, 'carrito.html', {'mensaje': 'No hay productos en el carrito'})
+    # Buscar el último pedido con estado "En carrito" (estado_id=1)
+    pedido = (
+        Pedido.objects
+        .filter(cliente_id=cliente_id, estadopedido__estado_id=1)
+        .order_by('-fecha')
+        .first()
+    )
 
+    # Si no hay pedido en carrito
+    if not pedido:
+        return render(request, 'carrito.html', {'mensaje': '🛒 No hay productos en el carrito'})
+
+    # Obtener detalles del pedido
     detalles = DetallePedido.objects.filter(pedido=pedido)
 
+    # Calcular el total por línea
     for d in detalles:
         d.total_linea = d.cantidad * d.precio_unitario
 
@@ -147,9 +157,9 @@ def actualizar_estado_pedido(request, pedido_id):
             actor_tipo='usuario'
         )
 
-        # 👇 Descontar stock si el estado es "Listo"
-        if estado_id == '3':  # Cambia el número si tu estado "Listo" tiene otro ID
-            pedido = Pedido.objects.get(pk=pedido_id)
+        # 👇 Descontar stock si el estado es "Enviado o entregado"
+        if estado_id == '3' or estado_id == '4':  # Cambia el número si tu estado "Enviado o entregado" tiene otro ID
+            pedido = Pedido.objects.get(pk=pedido_id) 
             detalles = DetallePedido.objects.filter(pedido_id=pedido_id)
 
             for item in detalles:

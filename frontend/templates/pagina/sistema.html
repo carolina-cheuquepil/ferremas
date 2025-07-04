@@ -12,7 +12,7 @@
         <th>Fecha</th>
         <th>Estado del pedido</th>
         <th>Tipo de entrega</th>
-        <th>Ver detalle</th>
+        <th>Acciones</th>
       </tr>
     </thead>
     <tbody>
@@ -29,6 +29,13 @@
             class="btn btn-sm btn-info"
             >Ver Detalle</a
           >
+          <a
+            href="{% url 'eliminar_pedido' pedido.pedido_id %}"
+            class="btn btn-sm btn-danger"
+            onclick="return confirm('¿Estás seguro de eliminar este pedido?');"
+          >
+            Eliminar
+          </a>
         </td>
       </tr>
       {% endfor %}

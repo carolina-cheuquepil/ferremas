@@ -6,13 +6,14 @@ public interface CategoriaRepository extends JpaRepository<CategoriaEntity, Long
 #FRONEND 1: Categoría, Producto, Marca
 #HistorialInventario
 #Sucursal
-from django.shortcuts import render, redirect
-from .models import Producto, Marca, HistorialInventario, Sucursal
+from django.shortcuts import render, redirect, get_object_or_404
+from .models import Producto, Marca, HistorialInventario, Sucursal, Categoria
 from utils.divisas import obtener_valor_dolar
 from pedidos_app.models import Pedido, EstadoPedido, DetallePedido
 from inventario_app.models import HistorialInventario
 from datetime import datetime
 from decimal import Decimal
+from forms import ProductoForm  
 
 
 def inventario_por_sucursal(request, sucursal_id):
@@ -44,9 +45,9 @@ def inventario_por_sucursal(request, sucursal_id):
         'inventario': inventario
     })
 
-
+#Muestra productos en la página
 def lista_productos(request):
-    productos = Producto.objects.select_related('marca').all()
+    productos = Producto.objects.select_related('marca').filter(publicado=True)  # Filtrar solo productos publicados
     valor_dolar = obtener_valor_dolar()
     if valor_dolar <= 0:
         valor_dolar = Decimal("943.40")  # Valor por defecto
@@ -129,33 +130,51 @@ def mostrar_productos(request):
     return render(request, 'pagina/mostrar_productos.html', {'productos': lista})
 
 
-def crear_producto_form(request):
+
+#PASO 2: Crear un nuevo producto
+def nuevo_producto(request):
     if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        modelo = request.POST.get('modelo')
-        precio = request.POST.get('precio')
-        codigo_sku = request.POST.get('codigo_sku')
-        marca_id = request.POST.get('marca')
-
-        # Validar que todos los campos estén completos
-        if not all([nombre, modelo, precio, codigo_sku, marca_id]):
-            return render(request, 'pagina/crear_producto.html', {'error': 'Todos los campos son obligatorios'})
-
-        # Crear el producto
-        producto = Producto.objects.create(
-            nombre_producto=nombre,
-            modelo=modelo,
-            precio=precio,
-            codigo_sku=codigo_sku,
-            marca_id=marca_id
-        )
-
-        return redirect('lista_productos')
-
-    marcas = Marca.objects.all()
-    return render(request, 'pagina/crear_producto.html', {'marcas': marcas})
+        form = ProductoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('mostrar_productos')  # Asegúrate de tener esta URL definida
+    else:
+        form = ProductoForm()
+    return render(request, 'pagina/nuevo_producto.html', {'form': form})
 
 
+def editar_producto(request, producto_id):
+    producto = get_object_or_404(Producto, pk=producto_id)
+
+    if request.method == 'POST':
+        form = ProductoForm(request.POST, instance=producto)
+        if form.is_valid():
+            form.save()
+            return redirect('mostrar_productos')  # Asegúrate de tener esta vista
+    else:
+        form = ProductoForm(instance=producto)
+
+    return render(request, 'pagina/editar_producto.html', {
+        'form': form,
+        'producto': producto
+    })
+
+
+def eliminar_producto(request, producto_id):
+    producto = get_object_or_404(Producto, pk=producto_id)
+    producto.delete()
+    return redirect('mostrar_productos')  # Asegúrate de tener esta vista definida
+
+def inicio(request):
+   
+    return render(request, 'index.html', {
+    
+    })
+
+def eliminar_pedido(request, pedido_id):
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+    pedido.delete()
+    return redirect('sistema_bodega')  # O donde se muestra la lista
 
 
 

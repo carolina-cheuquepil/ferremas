@@ -1,17 +1,18 @@
 from django.urls import path
-from .view_tablas.producto_views import productos_api, crear_producto, obtener_producto, actualizar_producto, eliminar_producto
+from .view_tablas.producto_views import productos_api, crear_producto, obtener_producto, actualizar_producto
 from .view_tablas.categoria_views import listar_categorias, obtener_categoria
 from .view_tablas.marca_views import all_marcas, get_by_id, crear_marca
 from .view_tablas.sucursal_views import listar_sucursales, obtener_sucursal
 from .view_tablas.inventario_views import get_all_inventario, crear_registro, actualizar_registro, actualizar_registro_parcial, eliminar_registro
-from .views import inventario_por_sucursal, lista_productos, sistema_bodega, mostrar_productos, crear_producto_form
+from .views import (inventario_por_sucursal, lista_productos, sistema_bodega, mostrar_productos, nuevo_producto,
+editar_producto, eliminar_producto, inicio, eliminar_pedido)
 # path('', include('inventario_app.urls')),
 urlpatterns = [
     path('productos/', productos_api, name='productos_api'),
     path('productos/crear/', crear_producto, name='crear_producto'),
     path('productos/<int:pk>/', obtener_producto, name='obtener_producto'),
     path('productos/<int:pk>/actualizar/', actualizar_producto, name='actualizar_producto'),
-    path('productos/<int:pk>/eliminar/', eliminar_producto, name='eliminar_producto'),
+    #path('productos/<int:pk>/eliminar/', eliminar_producto, name='eliminar_producto'),
     #Categorias
     path('categorias/', listar_categorias, name='listar_categorias'),
     path('categorias/<int:pk>/', obtener_categoria, name='obtener_categoria'),
@@ -33,7 +34,14 @@ urlpatterns = [
     path('productos/lista/', lista_productos, name='lista_productos'), #Parte 1
     path('pedidos/', sistema_bodega, name='sistema_bodega'),
     path('mostrar_productos/', mostrar_productos, name='mostrar_productos'),  # Parte 2
-    path('crear_producto/', crear_producto_form, name='crear_producto'),  # Parte 3
+    path('productos/nuevo/', nuevo_producto, name='nuevo_producto'), #PARTE !!!
+    path('productos/<int:producto_id>/editar/', editar_producto, name='editar_producto'),
+    path('producto/<int:producto_id>/eliminar/', eliminar_producto, name='eliminar_producto'),
+    path('', inicio, name='inicio'),  # Página de inicio
+    path('pedidos/eliminar/<int:pedido_id>/', eliminar_pedido, name='eliminar_pedido'),
+
+
+
 ]
 
 
