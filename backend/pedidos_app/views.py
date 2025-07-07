@@ -10,22 +10,26 @@ from django.shortcuts import redirect, render, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from pagos_app.models import Pago
 import logging
+from django.utils.timezone import now
+
 
 @api_view(['POST'])
 def agregar_producto_al_carrito(request):
     cliente_id = request.user.cliente.cliente_id
-
     producto_id = request.data.get('producto_id')
     cantidad = int(request.data.get('cantidad', 1))
 
     if not cliente_id or not producto_id:
         return Response({'error': 'Faltan datos'}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Buscar un pedido pendiente del cliente
-    pedido = Pedido.objects.filter(cliente_id=cliente_id, estadopedido__estado_id=1).last()
+    # Buscar el último pedido del cliente
+    pedido = Pedido.objects.filter(cliente_id=cliente_id).order_by('-fecha').first()
 
-    if not pedido:
+    # Verificar si no hay pedido o si ya no está en estado Pendiente
+    if not pedido or EstadoPedido.objects.filter(pedido=pedido).order_by('-fecha').first().estado_id != 1:
+        # Crear nuevo pedido
         pedido = Pedido.objects.create(
             cliente_id=cliente_id,
             sucursal_id=6,  # fijo por ahora
@@ -43,9 +47,10 @@ def agregar_producto_al_carrito(request):
             actor_tipo='cliente',
         )
 
+    # Obtener producto
     producto = Producto.objects.get(pk=producto_id)
 
-    # Agregar o actualizar producto en el detalle
+    # Agregar o actualizar producto
     detalle, creado = DetallePedido.objects.get_or_create(
         pedido=pedido,
         producto_id=producto_id,
@@ -59,22 +64,20 @@ def agregar_producto_al_carrito(request):
         detalle.cantidad += cantidad
         detalle.save()
 
-    # Actualizar total del pedido
     # Recalcular total del pedido
     detalles = DetallePedido.objects.filter(pedido=pedido)
     total = sum(d.cantidad * d.precio_unitario for d in detalles)
-
-    # Valor del dólar fijo por ahora
     valor_dolar = obtener_valor_dolar()
     total_usd = round(total / valor_dolar, 2)
 
-    # Actualizar el pedido
+    # Guardar pedido actualizado
     pedido.total = total
     pedido.valor_dolar_usado = valor_dolar
     pedido.total_usd = total_usd
     pedido.save()
 
     return Response({'mensaje': 'Producto agregado al carrito correctamente'})
+
 
 @api_view(['GET'])
 def ver_carrito(request, cliente_id):
@@ -96,19 +99,21 @@ def ver_carrito(request, cliente_id):
     except Exception as e:
         return Response({'error': str(e)}, status=500)
 
-#Parte 4
+#Trabajar 05/07/2025
 def ver_carrito_html(request, cliente_id):
-    # Buscar el último pedido con estado "En carrito" (estado_id=1)
+    # Buscar el último pedido del cliente (ordenado por fecha)
     pedido = (
         Pedido.objects
-        .filter(cliente_id=cliente_id, estadopedido__estado_id=1)
+        .filter(cliente_id=cliente_id)
         .order_by('-fecha')
         .first()
     )
 
-    # Si no hay pedido en carrito
     if not pedido:
         return render(request, 'carrito.html', {'mensaje': '🛒 No hay productos en el carrito'})
+
+    # Obtener el último estado del pedido
+    ultimo_estado = pedido.estadopedido_set.order_by('-fecha').first()
 
     # Obtener detalles del pedido
     detalles = DetallePedido.objects.filter(pedido=pedido)
@@ -117,10 +122,16 @@ def ver_carrito_html(request, cliente_id):
     for d in detalles:
         d.total_linea = d.cantidad * d.precio_unitario
 
+    # Pasar una bandera para saber si el pedido es editable
+    es_editable = ultimo_estado.estado_id == 1 if ultimo_estado else False
+
     return render(request, 'carrito.html', {
         'pedido': pedido,
-        'detalles': detalles
+        'detalles': detalles,
+        'es_editable': es_editable,
+        'mensaje': None if es_editable else 'Este pedido ya no se puede modificar.'
     })
+
 
 @csrf_exempt
 def actualizar_entrega(request, pedido_id):
@@ -137,10 +148,6 @@ def actualizar_entrega(request, pedido_id):
         
         pedido.save()
     return redirect('ver_carrito_html', cliente_id=pedido.cliente_id)
-
-    
-
-
 
 #Sistema interno: Ver detalle de un pedido específico
 #Descuenta INVENTARIO si el estado es "Enviado"
@@ -209,6 +216,94 @@ def detalle_pedido_view(request, pedido_id):
         'historial': historial_con_nombre,
         'estados': estados
     })
+
+def historial_pedidos(request, cliente_id):
+    pedidos = Pedido.objects.filter(cliente_id=cliente_id).order_by('-fecha')
+
+    historial = []
+    for pedido in pedidos:
+        ultimo_estado = EstadoPedido.objects.filter(pedido=pedido).order_by('-fecha').first()
+        detalles = DetallePedido.objects.filter(pedido=pedido)
+
+        historial.append({
+            'pedido': pedido,
+            'estado': ultimo_estado,
+            'detalles': detalles
+        })
+
+    return render(request, 'historial_pedidos.html', {
+        'historial': historial
+    })
+
+
+
+
+@csrf_exempt
+def seleccionar_pago(request, pedido_id):
+    if request.method == 'POST':
+        metodo = request.POST.get('metodo_pago')
+        pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+        # Guardar o redirigir según el método seleccionado
+        if metodo == 'webpay':
+            return redirect('iniciar_pago', pedido_id=pedido.pedido_id)
+        elif metodo == 'efectivo':
+            # Aquí puedes guardar el método y mostrar instrucciones
+            return redirect('pago_efectivo', pedido_id=pedido_id)
+        elif metodo == 'transferencia':
+            return redirect('pago_transferencia', pedido_id=pedido_id)
+        else:
+            return redirect('ver_carrito_html', cliente_id=pedido.cliente.cliente_id)
+
+
+
+def pago_efectivo(request, pedido_id):
+    pedido = Pedido.objects.get(pedido_id=pedido_id)
+
+    # Crear el registro de pago
+    Pago.objects.create(
+        pedido=pedido,
+        metodo_pago='Efectivo',
+        monto=pedido.total,
+        authorization_code=None  # o simplemente omitir si es null
+    )
+
+    # Cambiar el estado del pedido a "Pago aprobado"
+    EstadoPedido.objects.create(
+        pedido=pedido,
+        estado_id=7,  # 7 = Pago aprobado
+        fecha=datetime.now(),
+        actor_id=request.user.cliente.cliente_id,
+        actor_tipo='cliente'
+    )
+
+    return render(request, 'pagos_app/exito.html', {'pedido': pedido})
+
+
+
+@api_view(['GET'])
+def pago_transferencia(request, pedido_id):
+    pedido = get_object_or_404(Pedido, pk=pedido_id)
+
+    # Crear el pago
+    Pago.objects.create(
+        pedido=pedido,
+        metodo_pago='Transferencia',
+        monto=pedido.total,
+        fecha_pago=now(),
+        authorization_code='manual'  # O 'TRANSFER' si quieres otro identificador
+    )
+
+    # Registrar nuevo estado: Pago aprobado
+    EstadoPedido.objects.create(
+        pedido=pedido,
+        estado_id=7,  # Pago aprobado
+        fecha=now(),
+        actor_id=pedido.cliente_id,
+        actor_tipo='cliente',
+    )
+
+    return render(request, 'pagos_app/transferencia_confirmada.html', {'pedido': pedido})
 
 
 

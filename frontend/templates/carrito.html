@@ -1,8 +1,13 @@
 {% extends 'base.html' %}
-<!--Titulo-->
-{% block titulo %}Carrito - Ferremas{% endblock %} {% block subtitulo %}
+
+{% block titulo %}Carrito - Ferremas{% endblock %}
+
+{% block subtitulo %}
 <h2 class="text-center mb-4">🛒 Tu carrito de compras</h2>
-{% endblock %} {% block contenido %} {% if mensaje %}
+{% endblock %}
+
+{% block contenido %}
+{% if mensaje %}
 <div class="alert alert-info text-center">{{ mensaje }}</div>
 {% else %}
 <h5>
@@ -11,10 +16,9 @@
 <br />
 <div>
   <p><strong>Valor del dólar usado:</strong> ${{ pedido.valor_dolar_usado }}</p>
-  <p>
-    <strong>Total en dólares:</strong> ${{ pedido.total_usd|floatformat:2 }}
-  </p>
+  <p><strong>Total en dólares:</strong> ${{ pedido.total_usd|floatformat:2 }}</p>
 </div>
+
 <table class="table table-bordered table-hover mt-4">
   <thead class="table-light">
     <tr>
@@ -35,12 +39,12 @@
     {% endfor %}
   </tbody>
 </table>
-{% endif %}
 
 <div class="text-end mt-3">
   <p><strong>Total en pesos:</strong> ${{ pedido.total|floatformat:0 }}</p>
 </div>
 
+{% if es_editable %}
 <form method="post" action="{% url 'actualizar_entrega' pedido.pedido_id %}" class="mb-4">
   {% csrf_token %}
   <label for="tipo_entrega"><strong>Selecciona tipo de entrega:</strong></label>
@@ -55,29 +59,37 @@
   </div>
 
   <div class="text-center mt-4">
-  <button type="submit" class="btn btn-success px-4">
-    Actualizar entrega
-  </button>
-</div>
+    <button type="submit" class="btn btn-success px-4">
+      Actualizar entrega
+    </button>
+  </div>
+</form>
+<!--Trabajar 05/07/2025-->
+<div class="text-center mt-4">
+  <form method="post" action="{% url 'seleccionar_pago' pedido.pedido_id %}">
+  {% csrf_token %}
+  <label for="metodo_pago"><strong>Selecciona método de pago:</strong></label>
+  <select name="metodo_pago" id="metodo_pago" class="form-select w-50 mx-auto my-2" required>
+    <option value="webpay">WebPay</option>
+    <option value="efectivo">Efectivo</option>
+    <option value="transferencia">Transferencia</option>
+  </select>
 
+  <div class="text-center mt-3">
+    <button type="submit" class="btn btn-primary">
+      💰 Confirmar método de pago
+    </button>
+  </div>
 </form>
 
-<div class="text-center mt-4">
-  {% if pedido.pedido_id %}
-  <div class="text-center mt-4">
-    <a
-      href="{% url 'iniciar_pago' pedido.pedido_id %}"
-      class="btn btn-primary btn-lg"
-    >
-      💳 Pagar ahora
-    </a>
-  </div>
-  {% else %}
-  <div class="alert alert-warning text-center">
-    El pedido no está disponible para pagar.
-  </div>
-  {% endif %}
+
 </div>
+{% else %}
+<div class="alert alert-warning text-center mt-4">
+  Este pedido ya no se puede modificar porque fue pagado o está en proceso.
+</div>
+{% endif %}
+{% endif %}
 
 <script>
   function mostrarDireccion() {
@@ -86,8 +98,6 @@
     campoDireccion.style.display = tipoEntrega === "domicilio" ? "block" : "none";
   }
 
-  // Ejecutar al cargar si ya estaba seleccionado "domicilio"
   document.addEventListener("DOMContentLoaded", mostrarDireccion);
 </script>
-
 {% endblock %}

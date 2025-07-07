@@ -45,7 +45,8 @@ def retorno_pago(request):
         Pago.objects.create(
             pedido=pedido,
             metodo_pago='WebPay Plus',
-            monto=pedido.total
+            monto=pedido.total,
+            authorization_code=response['authorization_code'],
         )
         return render(request, 'pagos_app/exito.html', {'pedido': pedido})
     else:

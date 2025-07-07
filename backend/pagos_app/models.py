@@ -6,6 +6,7 @@ class Pago(models.Model):
     fecha_pago = models.DateTimeField(auto_now_add=True)
     metodo_pago = models.CharField(max_length=50, null=True, blank=True)
     monto = models.IntegerField()
+    authorization_code = models.CharField(max_length=10, blank=True, null=True)
 
     class Meta:
         db_table = 'Pago'

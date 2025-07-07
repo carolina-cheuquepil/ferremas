@@ -1,0 +1,15 @@
+{% extends 'base.html' %} {% block contenido %}
+<div class="alert alert-success text-center mt-4">
+  🧾 Tu pago por <strong>transferencia</strong> ha sido registrado
+  correctamente.<br />
+  Te contactaremos para validar el comprobante si es necesario.
+</div>
+
+<div class="text-center mt-3">
+  <a
+    href="{% url 'historial_pedidos' pedido.cliente.cliente_id %}"
+    class="btn btn-secondary"
+    >Ver historial de pedidos</a
+  >
+</div>
+{% endblock %}

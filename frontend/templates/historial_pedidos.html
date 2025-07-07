@@ -1,0 +1,42 @@
+{% extends "base.html" %} {% load custom_filters %}
+<!---->
+{% block contenido %}
+<h2>📦 Historial de pedidos</h2>
+
+{% if historial %} {% for item in historial %}
+<div class="card mb-4">
+  <div class="card-header">
+    <strong>Pedido #{{ item.pedido.pedido_id }}</strong>
+    <!---->
+    - {{ item.pedido.fecha|date:"d/m/Y H:i" }} - Estado:
+    <span class="badge bg-info">{{ item.estado.estado.nombre_estado }}</span>
+  </div>
+  <div class="card-body">
+    <table class="table table-sm">
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio unitario</th>
+          <th>Total línea</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for detalle in item.detalles %}
+        <tr>
+          <td>{{ detalle.producto.nombre }}</td>
+          <td>{{ detalle.cantidad }}</td>
+          <td>${{ detalle.precio_unitario }}</td>
+          <td>${{ detalle.cantidad|multiply:detalle.precio_unitario }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="text-end">
+      <strong>Total pedido: ${{ item.pedido.total }}</strong>
+    </p>
+  </div>
+</div>
+{% endfor %} {% else %}
+<p>No hay pedidos registrados aún.</p>
+{% endif %} {% endblock %}

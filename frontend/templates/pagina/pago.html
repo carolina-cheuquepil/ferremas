@@ -13,6 +13,7 @@
         <th>Pedido</th>
         <th>Fecha</th>
         <th>Método</th>
+        <th>Código de Autorización</th>
       </tr>
     </thead>
     <tbody>
@@ -23,6 +24,7 @@
         <td>{{ pago.pedido.pedido_id }}</td>
         <td>{{ pago.fecha_pago }}</td>
         <td>{{ pago.metodo_pago }}</td>
+        <td>{{ pago.authorization_code }}</td>
       </tr>
       {% endfor %}
     </tbody>
